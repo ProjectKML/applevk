@@ -30,10 +30,10 @@ pub struct IOQueue {
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct IOQueueDesc {
-    priority: IOPriority,
-    ty: IOCommandQueueType,
-    max_command_buffers: Option<u64>,
-    max_commands_in_flight: Option<u64>,
+    pub priority: IOPriority,
+    pub ty: IOCommandQueueType,
+    pub max_command_buffers: Option<u64>,
+    pub max_commands_in_flight: Option<u64>,
 }
 
 impl IOQueue {
