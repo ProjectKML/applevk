@@ -2,12 +2,12 @@ mod command_buffer;
 mod handle;
 mod queue;
 
-use std::sync::Arc;
+use std::{path::Path, sync::Arc};
 
 use ash::vk;
 pub use command_buffer::*;
 pub use handle::*;
-use metal::foreign_types::ForeignType;
+use metal::{foreign_types::ForeignType, CaptureDescriptor, CaptureManager, MTLCaptureDestination};
 pub use queue::*;
 use thiserror::Error;
 
@@ -62,5 +62,17 @@ impl Device {
     ) {
         let metal_objects = &self.0.metal_objects;
         (metal_objects.fp().export_metal_objects_ext)(metal_objects.device(), export_info);
+    }
+
+    pub fn capture<P: AsRef<Path>>(&self, path: P) -> Result<(), String> {
+        let manager = CaptureManager::shared();
+        let device = self.mtl_device();
+
+        let mut descriptor = CaptureDescriptor::new();
+        descriptor.set_capture_device(device);
+        descriptor.set_destination(MTLCaptureDestination::GpuTraceDocument);
+        descriptor.set_output_url(path);
+
+        manager.start_capture(&descriptor)
     }
 }
